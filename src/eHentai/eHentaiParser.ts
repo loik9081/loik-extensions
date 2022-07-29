@@ -116,3 +116,7 @@ export const parseTags = (tags: string[]): TagSection[] => {
     
     return tagSectionArr;
 }
+
+export const parseTitle = (title: string): string => {
+    return title.replaceAll(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
+}

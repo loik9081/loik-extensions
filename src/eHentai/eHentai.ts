@@ -26,16 +26,17 @@ import {
     parseArtist,
     parseLanguage,
     parsePages,
-    parseTags
+    parseTags,
+    parseTitle
 } from './eHentaiParser';
 
 import {
     modifySearch,
     resetSettings,
-} from './eHentaiSettings'
+} from './eHentaiSettings';
 
 export const eHentaiInfo: SourceInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'E-Hentai',
     icon: 'icon.png',
     author: 'loik9081',
@@ -136,7 +137,7 @@ export class eHentai extends Source {
 
         return createManga({
             id: mangaId,
-            titles: [data.title, data.title_jpn],
+            titles: [parseTitle(data.title), parseTitle(data.title_jpn)],
             image: data.thumb,
             rating: data.rating,
             status: MangaStatus.COMPLETED,
@@ -157,7 +158,7 @@ export class eHentai extends Source {
             mangaId: mangaId,
             chapNum: 1,
             langCode: parseLanguage(data.tags),
-            name: data.title,
+            name: parseTitle(data.title),
             time: new Date(parseInt(data.posted) * 1000)
         })];
     }

@@ -4,6 +4,8 @@ import {
     SourceStateManager
 } from 'paperback-extensions-common';
 
+import { parseTitle } from './eHentaiParser';
+
 export async function getGalleryData(ids: string[], requestManager: RequestManager): Promise<any> {
     const request = createRequestObject({
         url: 'https://api.e-hentai.org/api.php',
@@ -46,7 +48,7 @@ export async function getSearchData(query: string | undefined, page: number, cat
     for(const entry of json) {
         results.push(createMangaTile({
             id: `${entry.gid}/${entry.token}`,
-            title: createIconText({ text: entry.title }),
+            title: createIconText({ text: parseTitle(entry.title) }),
             image: entry.thumb
         }));
     }

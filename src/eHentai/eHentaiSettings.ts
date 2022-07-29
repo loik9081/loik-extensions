@@ -11,7 +11,7 @@ export const modifySearch = (stateManager: SourceStateManager): NavigationButton
         label: 'Modify Search',
         form: createForm({
             onSubmit: async (values) => {
-                stateManager.store('extraSearchArgs', values.extraSearchArgs.replace(/[“”‘’]/g,'"'));
+                stateManager.store('extraSearchArgs', values.extraSearchArgs.replace(/[“”‘’]/g, '"'))
             },
             validate: async () => true,
             sections: async () => {
@@ -25,12 +25,12 @@ export const modifySearch = (stateManager: SourceStateManager): NavigationButton
                             placeholder: '-guro -"males only"',
                             label: 'Extra Args:',
                             maskInput: false
-                        })];
+                        })]
                     }
                 })]
             }
         })
-    });
+    })
 }
 
 export const resetSettings = (stateManager: SourceStateManager): Button => {
@@ -39,7 +39,7 @@ export const resetSettings = (stateManager: SourceStateManager): Button => {
         label: 'Reset to Default',
         value: '',
         onTap: async () => {
-            stateManager.store('extraSearchArgs', null);
+            stateManager.store('extraSearchArgs', null)
         }
-    });
+    })
 }

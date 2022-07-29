@@ -371,7 +371,7 @@ const eHentaiHelper_1 = require("./eHentaiHelper");
 const eHentaiParser_1 = require("./eHentaiParser");
 const eHentaiSettings_1 = require("./eHentaiSettings");
 exports.eHentaiInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'E-Hentai',
     icon: 'icon.png',
     author: 'loik9081',
@@ -465,7 +465,7 @@ class eHentai extends paperback_extensions_common_1.Source {
         const data = (await (0, eHentaiHelper_1.getGalleryData)([mangaId], this.requestManager))[0];
         return createManga({
             id: mangaId,
-            titles: [data.title, data.title_jpn],
+            titles: [(0, eHentaiParser_1.parseTitle)(data.title), (0, eHentaiParser_1.parseTitle)(data.title_jpn)],
             image: data.thumb,
             rating: data.rating,
             status: paperback_extensions_common_1.MangaStatus.COMPLETED,
@@ -484,7 +484,7 @@ class eHentai extends paperback_extensions_common_1.Source {
                 mangaId: mangaId,
                 chapNum: 1,
                 langCode: (0, eHentaiParser_1.parseLanguage)(data.tags),
-                name: data.title,
+                name: (0, eHentaiParser_1.parseTitle)(data.title),
                 time: new Date(parseInt(data.posted) * 1000)
             })];
     }
@@ -521,6 +521,7 @@ exports.eHentai = eHentai;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getSearchData = exports.getGalleryData = void 0;
+const eHentaiParser_1 = require("./eHentaiParser");
 async function getGalleryData(ids, requestManager) {
     const request = createRequestObject({
         url: 'https://api.e-hentai.org/api.php',
@@ -559,7 +560,7 @@ async function getSearchData(query, page, categories, requestManager, cheerio, s
     for (const entry of json) {
         results.push(createMangaTile({
             id: `${entry.gid}/${entry.token}`,
-            title: createIconText({ text: entry.title }),
+            title: createIconText({ text: (0, eHentaiParser_1.parseTitle)(entry.title) }),
             image: entry.thumb
         }));
     }
@@ -567,10 +568,10 @@ async function getSearchData(query, page, categories, requestManager, cheerio, s
 }
 exports.getSearchData = getSearchData;
 
-},{}],50:[function(require,module,exports){
+},{"./eHentaiParser":50}],50:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseTags = exports.parsePages = exports.parseLanguage = exports.parseArtist = void 0;
+exports.parseTitle = exports.parseTags = exports.parsePages = exports.parseLanguage = exports.parseArtist = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const parseArtist = (tags) => {
     const artist = tags.filter(tag => tag.startsWith('artist:')).map(tag => tag.substring(7));
@@ -773,6 +774,10 @@ const parseTags = (tags) => {
     return tagSectionArr;
 };
 exports.parseTags = parseTags;
+const parseTitle = (title) => {
+    return title.replaceAll(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
+};
+exports.parseTitle = parseTitle;
 
 },{"paperback-extensions-common":4}],51:[function(require,module,exports){
 "use strict";

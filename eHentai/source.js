@@ -371,7 +371,7 @@ const eHentaiHelper_1 = require("./eHentaiHelper");
 const eHentaiParser_1 = require("./eHentaiParser");
 const eHentaiSettings_1 = require("./eHentaiSettings");
 exports.eHentaiInfo = {
-    version: '1.0.1',
+    version: '1.0.0',
     name: 'E-Hentai',
     icon: 'icon.png',
     author: 'loik9081',
@@ -410,7 +410,8 @@ class eHentai extends paperback_extensions_common_1.Source {
         return `https://e-hentai.org/g/${mangaId}`;
     }
     async getSearchTags() {
-        return [createTagSection({ id: 'categories', label: 'Categories', tags: [
+        return [createTagSection({
+                id: 'categories', label: 'Categories', tags: [
                     createTag({ id: 'category:2', label: 'Doujinshi' }),
                     createTag({ id: 'category:4', label: 'Manga' }),
                     createTag({ id: 'category:8', label: 'Artist CG' }),
@@ -421,14 +422,15 @@ class eHentai extends paperback_extensions_common_1.Source {
                     createTag({ id: 'category:64', label: 'Cosplay' }),
                     createTag({ id: 'category:128', label: 'Asian Porn' }),
                     createTag({ id: 'category:1', label: 'Misc' })
-                ] })];
+                ]
+            })];
     }
     async supportsTagExclusion() {
         return true;
     }
     async getHomePageSections(sectionCallback) {
-        for (const tag of (await this.getSearchTags())[0].tags) {
-            let section = createHomeSection({
+        for (const tag of (await this.getSearchTags())[0]?.tags ?? []) {
+            const section = createHomeSection({
                 id: tag.id,
                 title: tag.label,
                 view_more: true,
@@ -527,12 +529,12 @@ async function getGalleryData(ids, requestManager) {
         url: 'https://api.e-hentai.org/api.php',
         method: 'POST',
         headers: {
-            "content-type": "application/json"
+            'content-type': 'application/json'
         },
         data: {
-            "method": "gdata",
-            "gidlist": ids.map(id => id.split('/')),
-            "namespace": 1
+            'method': 'gdata',
+            'gidlist': ids.map(id => id.split('/')),
+            'namespace': 1
         }
     });
     const data = await requestManager.schedule(request, 1);
@@ -552,7 +554,7 @@ async function getSearchData(query, page, categories, requestManager, cheerio, s
     const searchResults = $('td.glname').toArray();
     const mangaIds = [];
     for (const manga of searchResults) {
-        let splitURL = ($('a', manga).attr('href') ?? '/////').split('/');
+        const splitURL = ($('a', manga).attr('href') ?? '/////').split('/');
         mangaIds.push(`${splitURL[4]}/${splitURL[5]}`);
     }
     const json = await getGalleryData(mangaIds, requestManager);

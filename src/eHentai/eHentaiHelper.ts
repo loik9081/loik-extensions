@@ -42,7 +42,7 @@ export async function getSearchData(query: string | undefined, page: number, cat
         mangaIds.push(`${splitURL[4]}/${splitURL[5]}`)
     }
 
-    const json = await getGalleryData(mangaIds, requestManager)
+    const json = mangaIds.length != 0 ? await getGalleryData(mangaIds, requestManager) : []
     const results = []
 
     for (const entry of json) {
@@ -52,6 +52,12 @@ export async function getSearchData(query: string | undefined, page: number, cat
             image: entry.thumb
         }))
     }
+
+    if ($('div.ptt').last().hasClass('ptdd')) results.push(createMangaTile({
+        id: 'stopSearch',
+        title: createIconText({ text: '' }),
+        image: ''
+    }))
 
     return results
 }

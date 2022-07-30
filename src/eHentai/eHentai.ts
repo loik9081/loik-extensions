@@ -36,7 +36,7 @@ import {
 } from './eHentaiSettings'
 
 export const eHentaiInfo: SourceInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'E-Hentai',
     icon: 'icon.png',
     author: 'loik9081',
@@ -113,8 +113,22 @@ export class eHentai extends Source {
 
     override async getViewMoreItems(homepageSectionId: string, metadata: any): Promise<PagedResults> {
         const page = metadata?.page ?? 0
+        let stopSearch = metadata?.stopSearch ?? false
+        if(stopSearch) return createPagedResults({
+            results: [],
+            metadata: {
+                stopSearch: true
+            }
+        })
+
+        const results = await getSearchData('', page, 1023 - parseInt(homepageSectionId.substring(9)), this.requestManager, this.cheerio, this.stateManager)
+        if (results[results.length - 1]?.id == 'stopSearch') {
+            results.pop()
+            stopSearch = true
+        }
+
         return createPagedResults({
-            results: await getSearchData('', page, 1023 - parseInt(homepageSectionId.substring(9)), this.requestManager, this.cheerio, this.stateManager),
+            results: results,
             metadata: {
                 page: page + 1
             }
@@ -177,6 +191,13 @@ export class eHentai extends Source {
 
     async getSearchResults(query: SearchRequest, metadata: any): Promise<PagedResults> {
         const page = metadata?.page ?? 0
+        let stopSearch = metadata?.stopSearch ?? false
+        if(stopSearch) return createPagedResults({
+            results: [],
+            metadata: {
+                stopSearch: true
+            }
+        })
 
         const includedCategories = query.includedTags?.filter(tag => tag.id.startsWith('category:'))
         const excludedCategories = query.excludedTags?.filter(tag => tag.id.startsWith('category:'))
@@ -185,11 +206,16 @@ export class eHentai extends Source {
         else if (excludedCategories != undefined && excludedCategories.length != 0) categories = excludedCategories.map(tag => parseInt(tag.id.substring(9))).reduce((prev, cur) => prev + cur, 0)
 
         const results = await getSearchData(query.title, page, categories, this.requestManager, this.cheerio, this.stateManager)
+        if (results[results.length - 1]?.id == 'stopSearch') {
+            results.pop()
+            stopSearch = true
+        }
 
         return createPagedResults({
             results: results,
             metadata: {
-                page: page + 1
+                page: page + 1,
+                stopSearch: stopSearch
             }
         })
     }

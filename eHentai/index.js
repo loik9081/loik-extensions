@@ -371,7 +371,7 @@ const eHentaiHelper_1 = require("./eHentaiHelper");
 const eHentaiParser_1 = require("./eHentaiParser");
 const eHentaiSettings_1 = require("./eHentaiSettings");
 exports.eHentaiInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'E-Hentai',
     icon: 'icon.png',
     author: 'loik9081',
@@ -444,8 +444,21 @@ class eHentai extends paperback_extensions_common_1.Source {
     }
     async getViewMoreItems(homepageSectionId, metadata) {
         const page = metadata?.page ?? 0;
+        let stopSearch = metadata?.stopSearch ?? false;
+        if (stopSearch)
+            return createPagedResults({
+                results: [],
+                metadata: {
+                    stopSearch: true
+                }
+            });
+        const results = await (0, eHentaiHelper_1.getSearchData)('', page, 1023 - parseInt(homepageSectionId.substring(9)), this.requestManager, this.cheerio, this.stateManager);
+        if (results[results.length - 1]?.id == 'stopSearch') {
+            results.pop();
+            stopSearch = true;
+        }
         return createPagedResults({
-            results: await (0, eHentaiHelper_1.getSearchData)('', page, 1023 - parseInt(homepageSectionId.substring(9)), this.requestManager, this.cheerio, this.stateManager),
+            results: results,
             metadata: {
                 page: page + 1
             }
@@ -501,6 +514,14 @@ class eHentai extends paperback_extensions_common_1.Source {
     }
     async getSearchResults(query, metadata) {
         const page = metadata?.page ?? 0;
+        let stopSearch = metadata?.stopSearch ?? false;
+        if (stopSearch)
+            return createPagedResults({
+                results: [],
+                metadata: {
+                    stopSearch: true
+                }
+            });
         const includedCategories = query.includedTags?.filter(tag => tag.id.startsWith('category:'));
         const excludedCategories = query.excludedTags?.filter(tag => tag.id.startsWith('category:'));
         let categories = 0;
@@ -509,10 +530,15 @@ class eHentai extends paperback_extensions_common_1.Source {
         else if (excludedCategories != undefined && excludedCategories.length != 0)
             categories = excludedCategories.map(tag => parseInt(tag.id.substring(9))).reduce((prev, cur) => prev + cur, 0);
         const results = await (0, eHentaiHelper_1.getSearchData)(query.title, page, categories, this.requestManager, this.cheerio, this.stateManager);
+        if (results[results.length - 1]?.id == 'stopSearch') {
+            results.pop();
+            stopSearch = true;
+        }
         return createPagedResults({
             results: results,
             metadata: {
-                page: page + 1
+                page: page + 1,
+                stopSearch: stopSearch
             }
         });
     }
@@ -557,7 +583,7 @@ async function getSearchData(query, page, categories, requestManager, cheerio, s
         const splitURL = ($('a', manga).attr('href') ?? '/////').split('/');
         mangaIds.push(`${splitURL[4]}/${splitURL[5]}`);
     }
-    const json = await getGalleryData(mangaIds, requestManager);
+    const json = mangaIds.length != 0 ? await getGalleryData(mangaIds, requestManager) : [];
     const results = [];
     for (const entry of json) {
         results.push(createMangaTile({
@@ -566,6 +592,12 @@ async function getSearchData(query, page, categories, requestManager, cheerio, s
             image: entry.thumb
         }));
     }
+    if ($('div.ptt').last().hasClass('ptdd'))
+        results.push(createMangaTile({
+            id: 'stopSearch',
+            title: createIconText({ text: '' }),
+            image: ''
+        }));
     return results;
 }
 exports.getSearchData = getSearchData;

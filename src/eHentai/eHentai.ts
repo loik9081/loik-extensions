@@ -36,7 +36,7 @@ import {
 } from './eHentaiSettings'
 
 export const eHentaiInfo: SourceInfo = {
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'E-Hentai',
     icon: 'icon.png',
     author: 'loik9081',
@@ -63,6 +63,7 @@ export class eHentai extends Source {
                         'referer': 'https://e-hentai.org/'
                     }
                 }
+                request.cookies = [createCookie({ name: 'nw', value: '1', domain: 'https://e-hentai.org/' })]
                 return request
             },
             interceptResponse: async (response: Response): Promise<Response> => { return response }
@@ -180,12 +181,11 @@ export class eHentai extends Source {
     }
 
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
-        const pages = await parsePages(mangaId, parseInt(chapterId), this.requestManager, this.cheerio)
         return createChapterDetails({
             id: chapterId,
             mangaId: mangaId,
             longStrip: false, // Change to true if other:webtoon?
-            pages: pages
+            pages: await parsePages(mangaId, parseInt(chapterId), this.requestManager, this.cheerio)
         })
     }
 

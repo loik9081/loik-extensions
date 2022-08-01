@@ -461,7 +461,8 @@ class eHentai extends paperback_extensions_common_1.Source {
         return createPagedResults({
             results: results,
             metadata: {
-                page: page + 1
+                page: page + 1,
+                stopSearch: stopSearch
             }
         });
     }

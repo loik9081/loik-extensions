@@ -365,26 +365,24 @@ __exportStar(require("./SearchFilter"), exports);
 },{"./Chapter":5,"./ChapterDetails":6,"./Constants":7,"./DynamicUI":23,"./HomeSection":24,"./Languages":25,"./Manga":26,"./MangaTile":27,"./MangaUpdate":28,"./PagedResults":29,"./RawData":30,"./RequestHeaders":31,"./RequestInterceptor":32,"./RequestManager":33,"./RequestObject":34,"./ResponseObject":35,"./SearchField":36,"./SearchFilter":37,"./SearchRequest":38,"./SourceInfo":39,"./SourceManga":40,"./SourceStateManager":41,"./SourceTag":42,"./TagSection":43,"./TrackedManga":44,"./TrackedMangaChapterReadAction":45,"./TrackerActionQueue":46}],48:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.eHentai = exports.eHentaiInfo = void 0;
+exports.xsnvshen = exports.xsnvshenInfo = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
-const eHentaiHelper_1 = require("./eHentaiHelper");
-const eHentaiParser_1 = require("./eHentaiParser");
-const eHentaiSettings_1 = require("./eHentaiSettings");
-exports.eHentaiInfo = {
-    version: '1.0.2',
-    name: 'E-Hentai',
+const xsnvshenHelper_1 = require("./xsnvshenHelper");
+exports.xsnvshenInfo = {
+    version: '1.0.0',
+    name: 'xsnvshen',
     icon: 'icon.png',
     author: 'loik9081',
-    description: 'Extension to grab galleries from E-Hentai',
-    contentRating: paperback_extensions_common_1.ContentRating.ADULT,
-    websiteBaseURL: 'https://e-hentai.org',
+    description: 'Extension to grab galleries from xsnvshen',
+    contentRating: paperback_extensions_common_1.ContentRating.MATURE,
+    websiteBaseURL: 'https://www.xsnvshen.com/',
     authorWebsite: 'https://github.com/loik9081',
     sourceTags: [{
             text: '18+',
             type: paperback_extensions_common_1.TagType.RED
         }]
 };
-class eHentai extends paperback_extensions_common_1.Source {
+class xsnvshen extends paperback_extensions_common_1.Source {
     constructor() {
         super(...arguments);
         this.requestManager = createRequestManager({
@@ -396,10 +394,9 @@ class eHentai extends paperback_extensions_common_1.Source {
                         ...(request.headers ?? {}),
                         ...{
                             'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Safari/605.1.15',
-                            'referer': 'https://e-hentai.org/'
+                            'referer': 'https://www.xsnvshen.com/album/'
                         }
                     };
-                    request.cookies = [createCookie({ name: 'nw', value: '1', domain: 'https://e-hentai.org/' })];
                     return request;
                 },
                 interceptResponse: async (response) => { return response; }
@@ -408,101 +405,227 @@ class eHentai extends paperback_extensions_common_1.Source {
         this.stateManager = createSourceStateManager({});
     }
     getMangaShareUrl(mangaId) {
-        return `https://e-hentai.org/g/${mangaId}`;
+        return `https://www.xsnvshen.com/album/${mangaId}`;
     }
     async getSearchTags() {
-        return [createTagSection({
-                id: 'categories', label: 'Categories', tags: [
-                    createTag({ id: 'category:2', label: 'Doujinshi' }),
-                    createTag({ id: 'category:4', label: 'Manga' }),
-                    createTag({ id: 'category:8', label: 'Artist CG' }),
-                    createTag({ id: 'category:16', label: 'Game CG' }),
-                    createTag({ id: 'category:256', label: 'Non-H' }),
-                    createTag({ id: 'category:32', label: 'Image Set' }),
-                    createTag({ id: 'category:512', label: 'Western' }),
-                    createTag({ id: 'category:64', label: 'Cosplay' }),
-                    createTag({ id: 'category:128', label: 'Asian Porn' }),
-                    createTag({ id: 'category:1', label: 'Misc' })
+        return [
+            createTagSection({
+                id: 'note',
+                label: 'Note: Selecting a tag ignores search',
+                tags: []
+            }),
+            createTagSection({
+                id: 'note',
+                label: 'Note: Can only select one tag at a time',
+                tags: []
+            }),
+            createTagSection({
+                id: 'clothing',
+                label: 'Clothing',
+                tags: [
+                    createTag({ id: '167', label: 'Thong' }),
+                    createTag({ id: '138', label: 'Bikini' }),
+                    createTag({ id: '183', label: 'Stockings' }),
+                    createTag({ id: '175', label: 'Lingerie' }),
+                    createTag({ id: '189', label: 'Wet' }),
+                    createTag({ id: '140', label: 'Cheongsam' }),
+                    createTag({ id: '146', label: 'Dudou' }),
+                    createTag({ id: '151', label: 'Flight Attendant' }),
+                    createTag({ id: '168', label: 'Nurse' }),
+                    createTag({ id: '173', label: 'Kimono' }),
+                    createTag({ id: '93', label: 'Uniform' }),
+                    createTag({ id: '97', label: 'School Uniform' }),
+                    createTag({ id: '115', label: 'Maid' }),
+                    createTag({ id: '112', label: 'Soccer Babe' }),
+                    createTag({ id: '186', label: 'Basketball Babe ' }),
+                    createTag({ id: '184', label: 'Boxing Babe' }),
+                    createTag({ id: '187', label: 'Cosplay' }) // 角色扮演
                 ]
-            })];
-    }
-    async supportsTagExclusion() {
-        return true;
+            }),
+            createTagSection({
+                id: 'sensation',
+                label: 'Sensation',
+                tags: [
+                    createTag({ id: '2', label: 'Sexy' }),
+                    createTag({ id: '96', label: 'Alluring' }),
+                    createTag({ id: '104', label: 'Mature' }),
+                    createTag({ id: '107', label: 'Pure' }),
+                    createTag({ id: '123', label: 'Cool' }),
+                    createTag({ id: '141', label: 'Wild' }),
+                    createTag({ id: '114', label: 'Cute' }),
+                    createTag({ id: '128', label: 'Excellent' }),
+                    createTag({ id: '171', label: 'Petite' }),
+                    createTag({ id: '100', label: 'Busty Baby Face' }),
+                    createTag({ id: '178', label: 'Well Endowed' }) // 大尺度
+                ]
+            }),
+            createTagSection({
+                id: 'features',
+                label: 'Features',
+                tags: [
+                    createTag({ id: '88', label: 'Skinny' }),
+                    createTag({ id: '95', label: 'Beautiful Butt' }),
+                    createTag({ id: '185', label: 'Curvy' }),
+                    createTag({ id: '166', label: 'Beautiful Legs' }),
+                    createTag({ id: '137', label: 'Natural' }),
+                    createTag({ id: '130', label: 'Fair Skin' }),
+                    createTag({ id: '149', label: 'Stunning' }),
+                    createTag({ id: '101', label: 'Tan' }),
+                    createTag({ id: '131', label: 'Big Boobs' }),
+                    createTag({ id: '143', label: 'Massive Boobs' }) // 人间胸器
+                ]
+            }),
+            createTagSection({
+                id: 'scene',
+                label: 'Scene',
+                tags: [
+                    createTag({ id: '160', label: 'Street' }),
+                    createTag({ id: '116', label: 'Bathroom' }),
+                    createTag({ id: '126', label: 'Outdoors' }),
+                    createTag({ id: '169', label: 'Beach' }),
+                    createTag({ id: '190', label: 'Pool' }),
+                    createTag({ id: '161', label: 'Home' }),
+                    createTag({ id: '176', label: 'Private Photoshoot' }) // 私房照
+                ]
+            }),
+            createTagSection({
+                id: 'region',
+                label: 'Region',
+                tags: [
+                    createTag({ id: '79', label: 'China' }),
+                    createTag({ id: '155', label: 'Hong Kong' }),
+                    createTag({ id: '152', label: 'Macau' }),
+                    createTag({ id: '165', label: 'Taiwan' }),
+                    createTag({ id: '108', label: 'Japan' }),
+                    createTag({ id: '180', label: 'Korea' }),
+                    createTag({ id: '90', label: 'Malaysia' }),
+                    createTag({ id: '156', label: 'Thailand' }),
+                    createTag({ id: '150', label: 'Western' }),
+                    createTag({ id: '191', label: 'Mixed' }) // 混血
+                ]
+            }) /*,
+            createTagSection({
+                id: 'company', // 机构
+                label: 'Company',
+                tags: [
+                    createTag({ id: '', label: '' }),
+                ]
+            })*/
+        ];
     }
     async getHomePageSections(sectionCallback) {
-        for (const tag of (await this.getSearchTags())[0]?.tags ?? []) {
+        const chosenTags = [];
+        for (const section of await this.getSearchTags()) {
+            if (section.id == 'note')
+                continue;
+            for (const tag of await this.stateManager.retrieve(section.id)) {
+                chosenTags.push({
+                    id: section.tags.find(el => el.label == tag).id,
+                    label: tag
+                });
+            }
+        }
+        for (const tag of chosenTags) {
             const section = createHomeSection({
                 id: tag.id,
                 title: tag.label,
                 view_more: true,
             });
             sectionCallback(section);
-            (0, eHentaiHelper_1.getSearchData)('', 0, 1023 - parseInt(tag.id.substring(9)), this.requestManager, this.cheerio, this.stateManager).then(manga => {
-                section.items = manga;
+            (0, xsnvshenHelper_1.getCategoryData)(tag.id, 0, this.requestManager, this.cheerio).then(manga => {
+                section.items = manga[0];
                 sectionCallback(section);
             });
         }
     }
     async getViewMoreItems(homepageSectionId, metadata) {
         const page = metadata?.page ?? 0;
-        let stopSearch = metadata?.stopSearch ?? false;
-        if (stopSearch)
+        if (metadata?.stopSearch ?? false)
             return createPagedResults({
                 results: [],
                 metadata: {
                     stopSearch: true
                 }
             });
-        const results = await (0, eHentaiHelper_1.getSearchData)('', page, 1023 - parseInt(homepageSectionId.substring(9)), this.requestManager, this.cheerio, this.stateManager);
-        if (results[results.length - 1]?.id == 'stopSearch') {
-            results.pop();
-            stopSearch = true;
-        }
+        const results = await (0, xsnvshenHelper_1.getCategoryData)(homepageSectionId, page, this.requestManager, this.cheerio);
         return createPagedResults({
-            results: results,
+            results: results[0],
             metadata: {
                 page: page + 1,
-                stopSearch: stopSearch
+                stopSearch: results[1]
             }
         });
     }
     async getSourceMenu() {
+        const tagList = await this.getSearchTags();
         return createSection({
             id: 'root',
             header: 'Settings',
             rows: async () => {
                 return [
-                    (0, eHentaiSettings_1.modifySearch)(this.stateManager),
-                    (0, eHentaiSettings_1.resetSettings)(this.stateManager)
+                    createNavigationButton({
+                        id: 'homePageCategoriesButton',
+                        value: '',
+                        label: 'Home Page Categories',
+                        form: createForm({
+                            onSubmit: async (values) => {
+                                for (const section of tagList) {
+                                    if (section.id != 'note')
+                                        this.stateManager.store(section.id, values[section.id]);
+                                }
+                            },
+                            validate: async () => true,
+                            sections: async () => {
+                                return [createSection({
+                                        id: 'categoriesSection',
+                                        rows: async () => {
+                                            const tagRows = [];
+                                            for (const section of tagList) {
+                                                if (section.id != 'note')
+                                                    tagRows.push(createSelect({
+                                                        id: section.id,
+                                                        value: await this.stateManager.retrieve(section.id),
+                                                        label: section.label,
+                                                        options: section.tags.map(tag => tag.label),
+                                                        allowsMultiselect: true,
+                                                        displayLabel: option => option
+                                                    }));
+                                            }
+                                            return tagRows;
+                                        }
+                                    })];
+                            }
+                        })
+                    })
                 ];
             }
         });
     }
     async getMangaDetails(mangaId) {
-        const data = (await (0, eHentaiHelper_1.getGalleryData)([mangaId], this.requestManager))[0];
+        const data = await (0, xsnvshenHelper_1.getGalleryData)(mangaId, this.requestManager, this.cheerio);
         return createManga({
             id: mangaId,
-            titles: [(0, eHentaiParser_1.parseTitle)(data.title), (0, eHentaiParser_1.parseTitle)(data.title_jpn)],
-            image: data.thumb,
-            rating: data.rating,
+            titles: [data.title],
+            image: data.image,
             status: paperback_extensions_common_1.MangaStatus.COMPLETED,
-            langFlag: (0, eHentaiParser_1.parseLanguage)(data.tags),
-            artist: (0, eHentaiParser_1.parseArtist)(data.tags),
-            tags: (0, eHentaiParser_1.parseTags)([data.category, ...data.tags]),
-            hentai: !(data.category == 'Non-H' || data.tags.includes('other:non-nude')),
+            langFlag: paperback_extensions_common_1.LanguageCode.CHINEESE,
+            artist: data.artist,
+            tags: (await this.getSearchTags()).map(section => createTagSection({ id: section.id, label: section.label, tags: section.tags.filter(tag => data.tags.includes(tag.id)) })).filter(section => section.tags.length != 0),
+            views: data.views,
+            hentai: false,
             // relatedIds: [], // possibly parent_gid and/or first_gid
-            lastUpdate: new Date(parseInt(data.posted) * 1000)
+            lastUpdate: data.lastUpdate
         });
     }
     async getChapters(mangaId) {
-        const data = (await (0, eHentaiHelper_1.getGalleryData)([mangaId], this.requestManager))[0];
+        const data = await (0, xsnvshenHelper_1.getGalleryData)(mangaId, this.requestManager, this.cheerio);
         return [createChapter({
-                id: data.filecount,
+                id: data.girlId,
                 mangaId: mangaId,
                 chapNum: 1,
-                langCode: (0, eHentaiParser_1.parseLanguage)(data.tags),
-                name: (0, eHentaiParser_1.parseTitle)(data.title),
-                time: new Date(parseInt(data.posted) * 1000)
+                langCode: paperback_extensions_common_1.LanguageCode.CHINEESE,
+                name: data.title,
+                time: data.lastUpdate
             })];
     }
     async getChapterDetails(mangaId, chapterId) {
@@ -510,354 +633,106 @@ class eHentai extends paperback_extensions_common_1.Source {
             id: chapterId,
             mangaId: mangaId,
             longStrip: false,
-            pages: await (0, eHentaiParser_1.parsePages)(mangaId, parseInt(chapterId), this.requestManager, this.cheerio)
+            pages: await (0, xsnvshenHelper_1.getPages)(mangaId, this.requestManager, this.cheerio)
         });
     }
     async getSearchResults(query, metadata) {
         const page = metadata?.page ?? 0;
-        let stopSearch = metadata?.stopSearch ?? false;
-        if (stopSearch)
+        if (metadata?.stopSearch ?? false)
             return createPagedResults({
                 results: [],
                 metadata: {
                     stopSearch: true
                 }
             });
-        const includedCategories = query.includedTags?.filter(tag => tag.id.startsWith('category:'));
-        const excludedCategories = query.excludedTags?.filter(tag => tag.id.startsWith('category:'));
-        let categories = 0;
-        if (includedCategories != undefined && includedCategories.length != 0)
-            categories = includedCategories.map(tag => parseInt(tag.id.substring(9))).reduce((prev, cur) => prev - cur, 1023);
-        else if (excludedCategories != undefined && excludedCategories.length != 0)
-            categories = excludedCategories.map(tag => parseInt(tag.id.substring(9))).reduce((prev, cur) => prev + cur, 0);
-        const results = await (0, eHentaiHelper_1.getSearchData)(query.title, page, categories, this.requestManager, this.cheerio, this.stateManager);
-        if (results[results.length - 1]?.id == 'stopSearch') {
-            results.pop();
-            stopSearch = true;
-        }
+        const results = query.includedTags?.length == 0 ? await (0, xsnvshenHelper_1.getSearchData)(query.title, page, this.requestManager, this.cheerio) :
+            await (0, xsnvshenHelper_1.getCategoryData)(query.includedTags[0].id, page, this.requestManager, this.cheerio);
         return createPagedResults({
-            results: results,
+            results: results[0],
             metadata: {
                 page: page + 1,
-                stopSearch: stopSearch
+                stopSearch: results[1]
             }
         });
     }
 }
-exports.eHentai = eHentai;
+exports.xsnvshen = xsnvshen;
 
-},{"./eHentaiHelper":49,"./eHentaiParser":50,"./eHentaiSettings":51,"paperback-extensions-common":4}],49:[function(require,module,exports){
+},{"./xsnvshenHelper":49,"paperback-extensions-common":4}],49:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSearchData = exports.getGalleryData = void 0;
-const eHentaiParser_1 = require("./eHentaiParser");
-async function getGalleryData(ids, requestManager) {
+exports.getSearchData = exports.getPages = exports.getGalleryData = exports.getCategoryData = void 0;
+async function getCategoryData(categoryId, page, requestManager, cheerio) {
     const request = createRequestObject({
-        url: 'https://api.e-hentai.org/api.php',
-        method: 'POST',
-        headers: {
-            'content-type': 'application/json'
-        },
-        data: {
-            'method': 'gdata',
-            'gidlist': ids.map(id => id.split('/')),
-            'namespace': 1
-        }
+        url: `https://www.xsnvshen.com/album/t${categoryId}/?p=${page + 1}`,
+        method: 'GET'
     });
     const data = await requestManager.schedule(request, 1);
-    const json = (typeof data.data == 'string') ? JSON.parse(data.data.replaceAll(/[\r\n]+/g, ' ')) : data.data;
-    return json.gmetadata;
+    const $ = cheerio.load(data.data);
+    const results = [];
+    const searchResults = $('li', 'ul.layout').toArray();
+    for (const manga of searchResults)
+        results.push(createMangaTile({
+            id: $('a', manga).attr('href').substring(7),
+            title: createIconText({ text: $('div.camLiTitleC>p>a', manga).text() }),
+            image: `https:${$('img', manga).attr('src')}`,
+        }));
+    return [results, !$('a', 'div#pageNum').last().hasClass('a1')];
+}
+exports.getCategoryData = getCategoryData;
+async function getGalleryData(id, requestManager, cheerio) {
+    const request = createRequestObject({
+        url: `https://www.xsnvshen.com/album/${id}`,
+        method: 'GET'
+    });
+    const data = await requestManager.schedule(request, 1);
+    const $ = cheerio.load(data.data);
+    const girlId = $('img#bigImg').attr('src')?.split('/')[4];
+    return {
+        title: $('div.swp-tit>h1>a').text(),
+        image: `https://img.xsnvshen.com/thumb_205x308/album/${girlId}/${id}/cover.jpg`,
+        artist: $('a', 'span.f20')?.text(),
+        tags: $('a[href^="/album"]', 'div.poster-nav>p').toArray().map(tag => $(tag).attr('href').slice(8, -1)),
+        views: parseInt($('span#hits').text()),
+        // relatedIds: [] // Include all suggested galleries
+        lastUpdate: new Date($('em#time').text().substring(3, 13)),
+        girlId: girlId
+    };
 }
 exports.getGalleryData = getGalleryData;
-async function getSearchData(query, page, categories, requestManager, cheerio, stateManager) {
-    if (query != undefined && query.length != 0 && query.split(' ').filter(q => !q.startsWith('-')).length != 0 && await stateManager.retrieve('extraSearchArgs'))
-        query += ` ${await stateManager.retrieve('extraSearchArgs')}`;
+async function getPages(id, requestManager, cheerio) {
     const request = createRequestObject({
-        url: `https://e-hentai.org/?page=${page}&f_cats=${categories}&f_search=${encodeURIComponent(query ?? '')}`,
+        url: `https://www.xsnvshen.com/album/${id}`,
         method: 'GET'
     });
     const data = await requestManager.schedule(request, 1);
     const $ = cheerio.load(data.data);
-    const searchResults = $('td.glname').toArray();
-    const mangaIds = [];
-    for (const manga of searchResults) {
-        const splitURL = ($('a', manga).attr('href') ?? '/////').split('/');
-        mangaIds.push(`${splitURL[4]}/${splitURL[5]}`);
-    }
-    const json = mangaIds.length != 0 ? await getGalleryData(mangaIds, requestManager) : [];
+    const pages = [];
+    const pageCount = parseInt($('span', 'em#time').text().slice(2, -2));
+    const girlId = $('img#bigImg').attr('src')?.split('/')[4];
+    for (let i = 0; i < pageCount; i++)
+        pages.push(`https://img.xsnvshen.com/album/${girlId}/${id}/${i >= 100 ? i : i >= 10 ? `0${i}` : `00${i}`}.jpg`);
+    return pages;
+}
+exports.getPages = getPages;
+async function getSearchData(query, page, requestManager, cheerio) {
+    const request = createRequestObject({
+        url: `https://www.xsnvshen.com/search?w=${encodeURIComponent(query ?? '')}`,
+        method: 'GET'
+    });
+    const data = await requestManager.schedule(request, 1);
+    const $ = cheerio.load(data.data);
     const results = [];
-    for (const entry of json) {
+    const searchResults = $('li', 'ul#newspiclist').toArray();
+    for (const manga of searchResults)
         results.push(createMangaTile({
-            id: `${entry.gid}/${entry.token}`,
-            title: createIconText({ text: (0, eHentaiParser_1.parseTitle)(entry.title) }),
-            image: entry.thumb
+            id: $('a', manga).attr('href').substring(7),
+            title: createIconText({ text: $('div.titlebox>a', manga).text() }),
+            image: `https:${$('img', manga).attr('src')}`,
         }));
-    }
-    if ($('div.ptt').last().hasClass('ptdd'))
-        results.push(createMangaTile({
-            id: 'stopSearch',
-            title: createIconText({ text: '' }),
-            image: ''
-        }));
-    return results;
+    return [results, true];
 }
 exports.getSearchData = getSearchData;
-
-},{"./eHentaiParser":50}],50:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseTitle = exports.parseTags = exports.parsePages = exports.parseLanguage = exports.parseArtist = void 0;
-const paperback_extensions_common_1 = require("paperback-extensions-common");
-const parseArtist = (tags) => {
-    const artist = tags.filter(tag => tag.startsWith('artist:')).map(tag => tag.substring(7));
-    const cosplayer = tags.filter(tag => tag.startsWith('cosplayer:')).map(tag => tag.substring(10));
-    if (artist.length != 0)
-        return artist[0];
-    else if (cosplayer.length != 0)
-        return cosplayer[0];
-    else
-        return undefined;
-};
-exports.parseArtist = parseArtist;
-const parseLanguage = (tags) => {
-    const languageTags = tags.filter(tag => tag.startsWith('language:') && tag != 'language:translated').map(tag => tag.substring(9));
-    if (languageTags.length == 0)
-        return paperback_extensions_common_1.LanguageCode.JAPANESE;
-    switch (languageTags[0]) {
-        case 'bengali':
-            return paperback_extensions_common_1.LanguageCode.BENGALI;
-            break;
-        case 'bulgarian':
-            return paperback_extensions_common_1.LanguageCode.BULGARIAN;
-            break;
-        case 'chinese':
-            return paperback_extensions_common_1.LanguageCode.CHINEESE;
-            break;
-        case 'czech':
-            return paperback_extensions_common_1.LanguageCode.CZECH;
-            break;
-        case 'danish':
-            return paperback_extensions_common_1.LanguageCode.DANISH;
-            break;
-        case 'dutch':
-            return paperback_extensions_common_1.LanguageCode.DUTCH;
-            break;
-        case 'english':
-            return paperback_extensions_common_1.LanguageCode.ENGLISH;
-            break;
-        case 'finnish':
-            return paperback_extensions_common_1.LanguageCode.FINNISH;
-            break;
-        case 'french':
-            return paperback_extensions_common_1.LanguageCode.FRENCH;
-            break;
-        case 'german':
-            return paperback_extensions_common_1.LanguageCode.GERMAN;
-            break;
-        case 'greek':
-            return paperback_extensions_common_1.LanguageCode.GREEK;
-            break;
-        case 'hungarian':
-            return paperback_extensions_common_1.LanguageCode.HUNGARIAN;
-            break;
-        case 'gujarati':
-        case 'nepali':
-        case 'punjabi':
-        case 'tamil':
-        case 'telugu':
-        case 'urdu':
-            return paperback_extensions_common_1.LanguageCode.INDIAN;
-            break;
-        case 'indonesian':
-            return paperback_extensions_common_1.LanguageCode.INDONESIAN;
-            break;
-        case 'persian':
-            return paperback_extensions_common_1.LanguageCode.IRAN;
-            break;
-        case 'italian':
-            return paperback_extensions_common_1.LanguageCode.ITALIAN;
-            break;
-        case 'korean':
-            return paperback_extensions_common_1.LanguageCode.KOREAN;
-            break;
-        case 'mongolian':
-            return paperback_extensions_common_1.LanguageCode.MONGOLIAN;
-            break;
-        case 'norwegian':
-            return paperback_extensions_common_1.LanguageCode.NORWEGIAN;
-            break;
-        case 'cebuano':
-        case 'tagalog':
-            return paperback_extensions_common_1.LanguageCode.PHILIPPINE;
-            break;
-        case 'polish':
-            return paperback_extensions_common_1.LanguageCode.POLISH;
-            break;
-        case 'portuguese':
-            return paperback_extensions_common_1.LanguageCode.PORTUGUESE;
-            break;
-        case 'romanian':
-            return paperback_extensions_common_1.LanguageCode.ROMANIAN;
-            break;
-        case 'russian':
-            return paperback_extensions_common_1.LanguageCode.RUSSIAN;
-            break;
-        case 'sanskrit':
-            return paperback_extensions_common_1.LanguageCode.SANSKRIT;
-            break;
-        case 'spanish':
-            return paperback_extensions_common_1.LanguageCode.SPANISH;
-            break;
-        case 'thai':
-            return paperback_extensions_common_1.LanguageCode.THAI;
-            break;
-        case 'turkish':
-            return paperback_extensions_common_1.LanguageCode.TURKISH;
-            break;
-        case 'ukrainian':
-            return paperback_extensions_common_1.LanguageCode.UKRAINIAN;
-            break;
-        case 'vietnamese':
-            return paperback_extensions_common_1.LanguageCode.VIETNAMESE;
-            break;
-        case 'welsh':
-            return paperback_extensions_common_1.LanguageCode.WELSH;
-            break;
-    }
-    return paperback_extensions_common_1.LanguageCode.UNKNOWN;
-};
-exports.parseLanguage = parseLanguage;
-async function getImage(url, requestManager, cheerio) {
-    const request = createRequestObject({
-        url: url,
-        method: 'GET'
-    });
-    const data = await requestManager.schedule(request, 1);
-    const $ = cheerio.load(data.data);
-    return $('#img').attr('src') ?? '';
-}
-async function parsePage(id, page, requestManager, cheerio) {
-    const request = createRequestObject({
-        url: `https://e-hentai.org/g/${id}/?p=${page}`,
-        method: 'GET'
-    });
-    const data = await requestManager.schedule(request, 1);
-    const $ = cheerio.load(data.data);
-    const pageArr = [];
-    const pageDivArr = $('div.gdtm').toArray();
-    for (const page of pageDivArr) {
-        pageArr.push(getImage($('a', page).attr('href') ?? '', requestManager, cheerio));
-    }
-    return Promise.all(pageArr);
-}
-async function parsePages(id, pageCount, requestManager, cheerio) {
-    const pageArr = [];
-    for (let i = 0; i <= pageCount / 40; i++) {
-        pageArr.push(parsePage(id, i, requestManager, cheerio));
-    }
-    return Promise.all(pageArr).then(pages => pages.reduce((prev, cur) => [...prev, ...cur], []));
-}
-exports.parsePages = parsePages;
-const namespaceHasTags = (namespace, tags) => { return tags.filter(tag => tag.startsWith(`${namespace}:`)).length != 0; };
-const createTagSectionForNamespace = (namespace, tags) => { return createTagSection({ id: namespace, label: namespace, tags: tags.filter(tag => tag.startsWith(`${namespace}:`)).map(tag => createTag({ id: tag, label: tag.substring(namespace.length + 1) })) }); };
-const parseTags = (tags) => {
-    const tagSectionArr = [];
-    switch (tags.shift()) {
-        case 'Doujinshi':
-            tagSectionArr.push(createTagSection({ id: 'categories', label: 'categories', tags: [createTag({ id: 'category:2', label: 'Doujinshi' })] }));
-            break;
-        case 'Manga':
-            tagSectionArr.push(createTagSection({ id: 'categories', label: 'categories', tags: [createTag({ id: 'category:4', label: 'Manga' })] }));
-            break;
-        case 'Artist CG':
-            tagSectionArr.push(createTagSection({ id: 'categories', label: 'categories', tags: [createTag({ id: 'category:8', label: 'Artist CG' })] }));
-            break;
-        case 'Game CG':
-            tagSectionArr.push(createTagSection({ id: 'categories', label: 'categories', tags: [createTag({ id: 'category:16', label: 'Game CG' })] }));
-            break;
-        case 'Non-H':
-            tagSectionArr.push(createTagSection({ id: 'categories', label: 'categories', tags: [createTag({ id: 'category:256', label: 'Non-H' })] }));
-            break;
-        case 'Image Set':
-            tagSectionArr.push(createTagSection({ id: 'categories', label: 'categories', tags: [createTag({ id: 'category:32', label: 'Image Set' })] }));
-            break;
-        case 'Western':
-            tagSectionArr.push(createTagSection({ id: 'categories', label: 'categories', tags: [createTag({ id: 'category:512', label: 'Western' })] }));
-            break;
-        case 'Cosplay':
-            tagSectionArr.push(createTagSection({ id: 'categories', label: 'categories', tags: [createTag({ id: 'category:64', label: 'Cosplay' })] }));
-            break;
-        case 'Asian Porn':
-            tagSectionArr.push(createTagSection({ id: 'categories', label: 'categories', tags: [createTag({ id: 'category:128', label: 'Asian Porn' })] }));
-            break;
-        case 'Misc':
-            tagSectionArr.push(createTagSection({ id: 'categories', label: 'categories', tags: [createTag({ id: 'category:1', label: 'Misc' })] }));
-            break;
-    }
-    if (namespaceHasTags('character', tags))
-        tagSectionArr.push(createTagSectionForNamespace('character', tags));
-    if (namespaceHasTags('female', tags))
-        tagSectionArr.push(createTagSectionForNamespace('female', tags));
-    if (namespaceHasTags('male', tags))
-        tagSectionArr.push(createTagSectionForNamespace('male', tags));
-    if (namespaceHasTags('mixed', tags))
-        tagSectionArr.push(createTagSectionForNamespace('mixed', tags));
-    if (namespaceHasTags('other', tags))
-        tagSectionArr.push(createTagSectionForNamespace('other', tags));
-    if (namespaceHasTags('parody', tags))
-        tagSectionArr.push(createTagSectionForNamespace('parody', tags));
-    return tagSectionArr;
-};
-exports.parseTags = parseTags;
-const parseTitle = (title) => {
-    return title.replaceAll(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
-};
-exports.parseTitle = parseTitle;
-
-},{"paperback-extensions-common":4}],51:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.resetSettings = exports.modifySearch = void 0;
-const modifySearch = (stateManager) => {
-    return createNavigationButton({
-        id: 'modifySearch',
-        value: '',
-        label: 'Modify Search',
-        form: createForm({
-            onSubmit: async (values) => {
-                stateManager.store('extraSearchArgs', values.extraSearchArgs.replace(/[“”‘’]/g, '"'));
-            },
-            validate: async () => true,
-            sections: async () => {
-                return [createSection({
-                        id: 'modifySearchSection',
-                        footer: 'Note: searches with only exclusions do not work, including on the home page',
-                        rows: async () => {
-                            return [createInputField({
-                                    id: 'extraSearchArgs',
-                                    value: await stateManager.retrieve('extraSearchArgs') ?? '',
-                                    placeholder: '-guro -"males only"',
-                                    label: 'Extra Args:',
-                                    maskInput: false
-                                })];
-                        }
-                    })];
-            }
-        })
-    });
-};
-exports.modifySearch = modifySearch;
-const resetSettings = (stateManager) => {
-    return createButton({
-        id: 'resetSettings',
-        label: 'Reset to Default',
-        value: '',
-        onTap: async () => {
-            stateManager.store('extraSearchArgs', null);
-        }
-    });
-};
-exports.resetSettings = resetSettings;
 
 },{}]},{},[48])(48)
 });

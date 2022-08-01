@@ -371,7 +371,7 @@ const eHentaiHelper_1 = require("./eHentaiHelper");
 const eHentaiParser_1 = require("./eHentaiParser");
 const eHentaiSettings_1 = require("./eHentaiSettings");
 exports.eHentaiInfo = {
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'E-Hentai',
     icon: 'icon.png',
     author: 'loik9081',
@@ -399,6 +399,7 @@ class eHentai extends paperback_extensions_common_1.Source {
                             'referer': 'https://e-hentai.org/'
                         }
                     };
+                    request.cookies = [createCookie({ name: 'nw', value: '1', domain: 'https://e-hentai.org/' })];
                     return request;
                 },
                 interceptResponse: async (response) => { return response; }
@@ -504,12 +505,11 @@ class eHentai extends paperback_extensions_common_1.Source {
             })];
     }
     async getChapterDetails(mangaId, chapterId) {
-        const pages = await (0, eHentaiParser_1.parsePages)(mangaId, parseInt(chapterId), this.requestManager, this.cheerio);
         return createChapterDetails({
             id: chapterId,
             mangaId: mangaId,
             longStrip: false,
-            pages: pages
+            pages: await (0, eHentaiParser_1.parsePages)(mangaId, parseInt(chapterId), this.requestManager, this.cheerio)
         });
     }
     async getSearchResults(query, metadata) {

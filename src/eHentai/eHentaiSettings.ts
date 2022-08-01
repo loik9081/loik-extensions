@@ -10,7 +10,7 @@ export const modifySearch = (stateManager: SourceStateManager): NavigationButton
         value: '',
         label: 'Modify Search',
         form: createForm({
-            onSubmit: async (values) => {
+            onSubmit: async values => {
                 stateManager.store('extraSearchArgs', values.extraSearchArgs.replace(/[“”‘’]/g, '"'))
             },
             validate: async () => true,

@@ -68,7 +68,7 @@ export class eHentai extends Source {
             },
             interceptResponse: async (response: Response): Promise<Response> => { return response }
         }
-    });
+    })
 
     stateManager = createSourceStateManager({});
 
@@ -131,7 +131,8 @@ export class eHentai extends Source {
         return createPagedResults({
             results: results,
             metadata: {
-                page: page + 1
+                page: page + 1,
+		stopSearch: stopSearch
             }
         })
     }

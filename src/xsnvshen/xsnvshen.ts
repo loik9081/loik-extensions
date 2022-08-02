@@ -26,7 +26,7 @@ import {
 } from './xsnvshenHelper'
 
 export const xsnvshenInfo: SourceInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'xsnvshen',
     icon: 'icon.png',
     author: 'loik9081',
@@ -175,13 +175,11 @@ export class xsnvshen extends Source {
     override async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
         const chosenTags = []
         for (const section of await this.getSearchTags()) {
-            if (section.id == 'note') continue
-            for(const tag of await this.stateManager.retrieve(section.id) as string[]) {
-                chosenTags.push({
-                    id: section.tags.find(el => el.label == tag)!.id,
-                    label: tag
-                })
-            }
+            if (section.id == 'note' || !await this.stateManager.retrieve(section.id)) continue
+            for(const tag of await this.stateManager.retrieve(section.id) as string[]) chosenTags.push({
+                id: section.tags.find(el => el.label == tag)!.id,
+                label: tag
+            })
         }
 
         for (const tag of chosenTags) {
@@ -244,7 +242,7 @@ export class xsnvshen extends Source {
                                         for (const section of tagList) {
                                             if (section.id != 'note') tagRows.push(createSelect({
                                                 id: section.id,
-                                                value: await this.stateManager.retrieve(section.id) as string[],
+                                                value: await this.stateManager.retrieve(section.id) as string[] ?? [],
                                                 label: section.label,
                                                 options: section.tags.map(tag => tag.label),
                                                 allowsMultiselect: true,
